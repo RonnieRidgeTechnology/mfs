@@ -1,0 +1,40 @@
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.select-search {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f9f9f9;
+}
+
+.select-search input {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+.select-options-container {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.select-option {
+    padding: 10px 12px;
+    cursor: pointer;
+}
+
+.select-option:hover {
+    background: #f0f5ff;
+}
