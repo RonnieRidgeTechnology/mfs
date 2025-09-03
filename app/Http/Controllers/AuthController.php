@@ -2396,4 +2396,103 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    // Preview transactions for reservation (deletion)
+    public function previewReserveTransactions(Request $request)
+    {
+        try {
+            $month = $request->input('month');
+            $year = $request->input('year');
+
+            if (!$month || !$year) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Month and year are required'
+                ], 400);
+            }
+
+            // Get transactions for the specified month and year
+            $transactions = Transaction::with('user')
+                ->whereYear('date', $year)
+                ->whereMonth('date', $month)
+                ->get();
+
+            $totalAmount = $transactions->sum('amount');
+
+            return response()->json([
+                'success' => true,
+                'month' => $month,
+                'year' => $year,
+                'transactions' => $transactions,
+                'totalAmount' => $totalAmount,
+                'count' => $transactions->count()
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error previewing reserve transactions: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to preview transactions: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Reserve (delete) transactions for a specific month and year
+    public function reserveTransactions(Request $request)
+    {
+        try {
+            $month = $request->input('month');
+            $year = $request->input('year');
+
+            if (!$month || !$year) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Month and year are required'
+                ], 400);
+            }
+
+            // Get transactions for the specified month and year
+            $transactions = Transaction::whereYear('date', $year)
+                ->whereMonth('date', $month)
+                ->get();
+
+            if ($transactions->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No transactions found for the specified period'
+                ], 404);
+            }
+
+            $totalAmount = $transactions->sum('amount');
+            $transactionCount = $transactions->count();
+
+            // Log the reservation action
+            log_activity(
+                "Reserved {$transactionCount} transactions for {$month}/{$year} (Total: £{$totalAmount})",
+                auth()->user(),
+                'reserve'
+            );
+
+            // Delete the transactions
+            $transactions->each(function ($transaction) {
+                $transaction->delete();
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Transactions reserved successfully',
+                'reservedCount' => $transactionCount,
+                'totalAmount' => $totalAmount,
+                'month' => $month,
+                'year' => $year
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error reserving transactions: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reserve transactions: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

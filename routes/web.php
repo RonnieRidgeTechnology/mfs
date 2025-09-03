@@ -59,6 +59,10 @@ Route::middleware(['auth', SuperAdminMiddleware::class])->group(function () {
     Route::post('admin/transactions/import', [AuthController::class, 'import'])->name('admin.transactions.import');
     Route::delete('transactions/{id}', [AuthController::class, 'deleteTransaction'])->name('transactions.destroy');
 
+    // Reserve Transactions API
+    Route::get('/api/transactions/preview-reserve', [AuthController::class, 'previewReserveTransactions'])->name('api.transactions.preview-reserve');
+    Route::post('/api/transactions/reserve', [AuthController::class, 'reserveTransactions'])->name('api.transactions.reserve');
+
     //Arhive transactions
     Route::get('transactions/archive', [AuthController::class, 'archivetransactionindex'])->name('transactions.archive');
     //Debeit transactions

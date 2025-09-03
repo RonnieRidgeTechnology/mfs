@@ -463,7 +463,7 @@
                         <button id="hb_back_step_3" style="margin-top: 20px;" class="hb_back_button">Check Another Year</button>
                         <button id="hb_new_lookup" style="margin-top: 20px;" class="hb_action_button">New Lookup</button>
                     </div>
-                </div>
+            </div>
 
                 <!-- Loading State -->
                 <div id="hb_loading" class="hb_loading" style="display: none;">
